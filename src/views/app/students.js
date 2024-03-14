@@ -6,10 +6,10 @@ import {
   DropdownMenu,
   DropdownItem,
   UncontrolledDropdown,
-  FormGroup,
-  Form,
-  Input,
-  Label,
+  // FormGroup,
+  // Form,
+  // Input,
+  // Label,
 } from 'reactstrap';
 // import { servicePath } from 'constants/defaultValues';
 import TooltipCustom from 'components/common/TooltipCustom';
@@ -28,7 +28,7 @@ import {
 import CloseableAlert from 'containers/ui/CloseableAlert';
 
 // const apiUrl = `${servicePath}/cakes/paging`;
-const apiUrl = `${apiBaseUrl}/students`;
+const apiUrl = `${apiBaseUrl}/students/list/10`;
 const apiUrlReport = `${apiBaseUrl}/students/report`;
 
 const pageSizes = [4, 8, 12, 20];
@@ -77,10 +77,10 @@ const StudentsList = ({ match }) => {
     setFMessage('');
   };
 
-  const [schoolFilter, setSchoolFilter] = useState('');
-  const [classFilter, setClassFilter] = useState('');
-  const [sectionFilter, setSectionFilter] = useState('');
-  const [filteredItems, setFilteredItems] = useState([]);
+  // const [schoolFilter, setSchoolFilter] = useState('');
+  // const [classFilter, setClassFilter] = useState('');
+  // const [sectionFilter, setSectionFilter] = useState('');
+  // const [filteredItems, setFilteredItems] = useState([]);
 
   // const [updateName, setUpdateName] = useState('Select');
   // const [reportIDVal, setReportIDVal] = useState('');
@@ -114,7 +114,7 @@ const StudentsList = ({ match }) => {
       const data = await apiRequestAsync('get', apiUrl, null);
 
       setItems(
-        data.data.map((x) => {
+        data.data.data.map((x) => {
           return { ...x };
         })
       );
@@ -149,36 +149,36 @@ const StudentsList = ({ match }) => {
     fetchDataReports();
   }, []);
 
-  const applyFilters = () => {
-    let filteredData = [...items];
+  // const applyFilters = () => {
+  //   let filteredData = [...items];
 
-    if (schoolFilter) {
-      const lowerCaseSchoolFilter = schoolFilter.toLowerCase();
-      filteredData = filteredData.filter((entry) =>
-        entry.school_name.toLowerCase().includes(lowerCaseSchoolFilter)
-      );
-    }
+  //   if (schoolFilter) {
+  //     const lowerCaseSchoolFilter = schoolFilter.toLowerCase();
+  //     filteredData = filteredData.filter((entry) =>
+  //       entry.school_name.toLowerCase().includes(lowerCaseSchoolFilter)
+  //     );
+  //   }
 
-    if (classFilter) {
-      const lowerCaseClassFilter = classFilter.toLowerCase();
-      filteredData = filteredData.filter((entry) =>
-        entry.class_id.toLowerCase().includes(lowerCaseClassFilter)
-      );
-    }
+  //   if (classFilter) {
+  //     const lowerCaseClassFilter = classFilter.toLowerCase();
+  //     filteredData = filteredData.filter((entry) =>
+  //       entry.class_id.toLowerCase().includes(lowerCaseClassFilter)
+  //     );
+  //   }
 
-    if (sectionFilter) {
-      const lowerCaseSectionFilter = sectionFilter.toLowerCase();
-      filteredData = filteredData.filter((entry) =>
-        entry.section_id.toLowerCase().includes(lowerCaseSectionFilter)
-      );
-    }
+  //   if (sectionFilter) {
+  //     const lowerCaseSectionFilter = sectionFilter.toLowerCase();
+  //     filteredData = filteredData.filter((entry) =>
+  //       entry.section_id.toLowerCase().includes(lowerCaseSectionFilter)
+  //     );
+  //   }
 
-    setFilteredItems(filteredData);
-  };
+  //   setFilteredItems(filteredData);
+  // };
 
-  useEffect(() => {
-    applyFilters();
-  }, [items, schoolFilter, classFilter, sectionFilter]);
+  // useEffect(() => {
+  //   applyFilters();
+  // }, [items, schoolFilter, classFilter, sectionFilter]);
 
   const handleChangeSelectAll = (isToggle) => {
     if (selectedItems.length >= items.length) {
@@ -291,18 +291,6 @@ const StudentsList = ({ match }) => {
       {
         Header: 'Gender',
         accessor: 'std_gender',
-        cellClass: 'text-muted w-20',
-        Cell: ({ value }) => <>{value}</>,
-      },
-      {
-        Header: 'Class',
-        accessor: 'class_id',
-        cellClass: 'text-muted w-20',
-        Cell: ({ value }) => <>{value}</>,
-      },
-      {
-        Header: 'Section',
-        accessor: 'section_id',
         cellClass: 'text-muted w-20',
         Cell: ({ value }) => <>{value}</>,
       },
@@ -522,8 +510,8 @@ const StudentsList = ({ match }) => {
           />
         </FormDataProviderReport>
 
-        <Form className="d-flex align-items-center">
-          <FormGroup className="form-group tooltip-right-bottom mr-4">
+       {/* <Form className="d-flex align-items-center">
+           <FormGroup className="form-group tooltip-right-bottom mr-4">
             <Label style={{ fontSize: '14px' }}>School Name </Label>
             <Input
               className="mb-2"
@@ -554,16 +542,16 @@ const StudentsList = ({ match }) => {
               value={sectionFilter}
               onChange={(e) => setSectionFilter(e.target.value)}
             />
-          </FormGroup>
+          </FormGroup> */}
 
           {/* <Button className='c-btn-height' outline color="primary" onClick={() => applyFilters()}>
                         Filter
                     </Button> */}
-        </Form>
+        {/* </Form> */}
 
         <ListPageListing
           cols={cols}
-          items={filteredItems}
+          items={items}
           onContextMenuClick={onContextMenuClick}
           onContextMenu={onContextMenu}
         />
