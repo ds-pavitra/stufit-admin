@@ -17,8 +17,11 @@ function ReusableTable({
   columns,
   data,
   divided = false,
-  defaultPageSize = 10,
+  defaultPageSize = 50,
   actions,
+  apiUrl, 
+  onDataUpdate,
+  paginationKey,
 }) {
   const {
     getTableProps,
@@ -26,13 +29,13 @@ function ReusableTable({
     prepareRow,
     headerGroups,
     page,
-    canPreviousPage,
-    canNextPage,
-    pageCount,
-    gotoPage,
-    setPageSize,
-    setGlobalFilter,
-    state: { pageIndex, pageSize, globalFilter },
+    // canPreviousPage,
+    // canNextPage,
+    // pageCount,
+    // gotoPage,
+    // setPageSize,
+    // setGlobalFilter,
+    // state: { pageIndex, pageSize, globalFilter },
   } = useTable(
     {
       columns,
@@ -44,11 +47,11 @@ function ReusableTable({
     usePagination
   );
 
-  const pageSizeOptions = [4, 10, 20, 30, 40, 50];
+  // const pageSizeOptions = [4, 10, 20, 30, 40, 50];
 
   return (
     <>
-      <div className="d-block d-md-inline-block pt-1">
+      {/* <div className="d-block d-md-inline-block pt-1">
         <div className="search-sm d-inline-block float-md-left mr-1 mb-1 align-top">
           <input
             type="text"
@@ -59,7 +62,7 @@ function ReusableTable({
             placeholder="Search..."
           />
         </div>
-      </div>
+      </div> */}
 
       <table
         {...getTableProps()}
@@ -129,17 +132,20 @@ function ReusableTable({
       </table>
 
       <DatatablePagination
-        page={pageIndex}
-        pages={pageCount}
-        canPrevious={canPreviousPage}
-        canNext={canNextPage}
-        pageSizeOptions={pageSizeOptions}
-        showPageSizeOptions
-        showPageJump={false}
-        defaultPageSize={pageSize}
-        onPageChange={(p) => gotoPage(p)}
-        onPageSizeChange={(s) => setPageSize(s)}
-        paginationMaxSize={pageCount}
+        // page={pageIndex}
+        // pages={pageCount}
+        // canPrevious={canPreviousPage}
+        // canNext={canNextPage}
+        // pageSizeOptions={pageSizeOptions}
+        // showPageSizeOptions
+        // showPageJump={false}
+        // defaultPageSize={pageSize}
+        // onPageChange={(p) => gotoPage(p)}
+        // onPageSizeChange={(s) => setPageSize(s)}
+        // paginationMaxSize={pageCount}
+        apiUrl={apiUrl}
+        onDataUpdate={onDataUpdate}
+        paginationKey={paginationKey}
       />
     </>
   );

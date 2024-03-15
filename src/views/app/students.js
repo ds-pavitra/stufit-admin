@@ -28,7 +28,7 @@ import {
 import CloseableAlert from 'containers/ui/CloseableAlert';
 
 // const apiUrl = `${servicePath}/cakes/paging`;
-const apiUrl = `${apiBaseUrl}/students/list/10`;
+const apiUrl = `${apiBaseUrl}/students/list`;
 const apiUrlReport = `${apiBaseUrl}/students/report`;
 
 const pageSizes = [4, 8, 12, 20];
@@ -111,7 +111,7 @@ const StudentsList = ({ match }) => {
 
   const fetchData = async () => {
     try {
-      const data = await apiRequestAsync('get', apiUrl, null);
+      const data = await apiRequestAsync('get', `${apiUrl}/10`, null);
 
       setItems(
         data.data.data.map((x) => {
@@ -510,7 +510,7 @@ const StudentsList = ({ match }) => {
           />
         </FormDataProviderReport>
 
-       {/* <Form className="d-flex align-items-center">
+        {/* <Form className="d-flex align-items-center">
            <FormGroup className="form-group tooltip-right-bottom mr-4">
             <Label style={{ fontSize: '14px' }}>School Name </Label>
             <Input
@@ -544,7 +544,7 @@ const StudentsList = ({ match }) => {
             />
           </FormGroup> */}
 
-          {/* <Button className='c-btn-height' outline color="primary" onClick={() => applyFilters()}>
+        {/* <Button className='c-btn-height' outline color="primary" onClick={() => applyFilters()}>
                         Filter
                     </Button> */}
         {/* </Form> */}
@@ -554,6 +554,9 @@ const StudentsList = ({ match }) => {
           items={items}
           onContextMenuClick={onContextMenuClick}
           onContextMenu={onContextMenu}
+          apiUrl={apiUrl}
+          onDataUpdate={setItems}
+          paginationKey="YES"
         />
       </div>
 

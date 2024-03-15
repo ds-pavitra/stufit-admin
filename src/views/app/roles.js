@@ -310,6 +310,7 @@ const RolesList = ({ match }) => {
           items={items}
           onContextMenuClick={onContextMenuClick}
           onContextMenu={onContextMenu}
+          paginationKey="NO"
         />
       </div>
     </>

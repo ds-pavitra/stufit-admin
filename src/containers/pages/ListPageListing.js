@@ -13,11 +13,21 @@ const ListPageListing = ({
   items,
   onContextMenuClick,
   onContextMenu,
+  apiUrl,
+  onDataUpdate,
+  paginationKey,
 }) => {
   return (
     <>
       <div>
-        <ReusableTable columns={cols} data={items} divided />
+        <ReusableTable
+          columns={cols}
+          data={items}
+          divided
+          apiUrl={apiUrl}
+          onDataUpdate={onDataUpdate}
+          paginationKey={paginationKey}
+        />
       </div>
       <ContextMenuContainer
         onContextMenuClick={onContextMenuClick}

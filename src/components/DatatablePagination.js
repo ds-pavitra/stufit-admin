@@ -1,6 +1,5 @@
-/* eslint-disable no-param-reassign */
-/* eslint-disable react/no-array-index-key */
 import React, { useState, useEffect } from 'react';
+import { apiRequestAsync } from 'constants/defaultValues';
 import {
   Pagination,
   PaginationItem,
@@ -11,186 +10,113 @@ import {
   DropdownItem,
 } from 'reactstrap';
 
-const DataTablePagination = ({
-  page,
-  pages,
-  canPrevious,
-  canNext,
-  pageSizeOptions,
-  showPageSizeOptions,
-  showPageJump,
-  defaultPageSize,
-  onPageChange,
-  onPageSizeChange,
-}) => {
-  const [pageState, setPageState] = useState(page);
-  const [pageSize, setPageSize] = useState(defaultPageSize);
-  const [showPrevNextPages, setShowPrevNextPages] = useState(true);
+const DataTablePagination = ({ apiUrl, onDataUpdate, paginationKey }) => {
+  const [isLoaded, setIsLoaded] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [itemsPerPage, setItemsPerPage] = useState(10); // Default items per page
+
+  const fetchData = async () => {
+    try {
+      setIsLoaded(true);
+      const response = await apiRequestAsync(
+        'get',
+        `${apiUrl}/${itemsPerPage}?page=${currentPage}`,
+        null
+      );
+      onDataUpdate(
+        response.data.data.map((x) => {
+          return { ...x };
+        })
+      );
+      setTotalPages(response.data.last_page);
+    } catch (error) {
+      console.error('Error fetching data:', error);
+    }
+  };
 
   useEffect(() => {
-    setPageState(page);
-  }, [page]);
-
-  const getSafePage = (_page) => {
-    let p = _page;
-    if (Number.isNaN(_page)) {
-      p = page;
+    if (paginationKey === 'YES') {
+      fetchData();
+    } else {
+      setIsLoaded(true);
+      setTotalPages(1);
     }
-    return Math.min(Math.max(p, 0), pages - 1);
-  };
+  }, [currentPage, itemsPerPage, paginationKey]);
 
-  const changePageSize = (size) => {
-    onPageSizeChange(size);
-    setPageSize(size);
-  };
-
-  const changePage = (_page) => {
-    const p = getSafePage(_page);
-
-    if (p !== pageState) {
-      setPageState(p);
-      onPageChange(p);
-      setShowPrevNextPages(true);
+  const goToNextPage = () => {
+    if (currentPage < totalPages) {
+      setCurrentPage(currentPage + 1);
     }
   };
 
-  const pageClick = (pageIndex) => {
-    changePage(pageIndex);
+  const goToPreviousPage = () => {
+    if (currentPage > 1) {
+      setCurrentPage(currentPage - 1);
+    }
   };
 
-  const renderPages = () => {
-    const totalPages = pages;
-    const currentPage = pageState;
+  const goToPage = (page) => {
+    setCurrentPage(page);
+  };
 
-    if (!showPrevNextPages) {
-      return null;
-    }
+  const handleItemsPerPageChange = (event) => {
+    setItemsPerPage(parseInt(event.target.value, 10));
+    setCurrentPage(1); // Reset current page to 1 when items per page changes
+  };
 
-    const pageButtons = [];
-    const rangeStart = Math.max(currentPage - 1, 0);
-    const rangeEnd = Math.min(currentPage + 2, totalPages);
+  return !isLoaded ? (
+    <div className="loading" />
+  ) : (
+    <div className="d-flex align-items-center justify-content-between table_pagination">
 
-    if (rangeStart > 0) {
-      pageButtons.push(
-        <PaginationItem key={0}>
-          <PaginationLink onClick={() => pageClick(0)}>1</PaginationLink>
+      <div>Page {currentPage} of {totalPages}</div>
+
+      {/* Pagination controls */}
+      <Pagination>
+        <PaginationItem disabled={currentPage === 1}>
+          <PaginationLink previous onClick={goToPreviousPage} />
         </PaginationItem>
-      );
-
-      if (rangeStart > 1) {
-        pageButtons.push(
-          <PaginationItem key="ellipsis-start" disabled>
-            <PaginationLink>...</PaginationLink>
-          </PaginationItem>
-        );
-      }
-    }
-
-    for (let i = rangeStart; i < rangeEnd; i += 1) {
-      const active = currentPage === i;
-      pageButtons.push(
-        <PaginationItem key={i} active={active}>
-          <PaginationLink onClick={() => pageClick(i)}>{i + 1}</PaginationLink>
+        {Array.from({ length: totalPages }, (_, index) => {
+          if (
+            index + 1 === currentPage ||
+            index + 1 === currentPage - 1 ||
+            index + 1 === currentPage + 1 ||
+            index + 1 === totalPages ||
+            index + 1 === 1 || // Always show the first page button
+            index + 1 === totalPages // Always show the last page button
+          ) {
+            return (
+              <PaginationItem key={index + 1} active={currentPage === index + 1}>
+                <PaginationLink onClick={() => goToPage(index + 1)}>
+                  {index + 1}
+                </PaginationLink>
+              </PaginationItem>
+            );
+          }
+          return null;
+        })}
+        <PaginationItem disabled={currentPage === totalPages}>
+          <PaginationLink next onClick={goToNextPage} />
         </PaginationItem>
-      );
-    }
+      </Pagination>
 
-    if (rangeEnd < totalPages - 1) {
-      pageButtons.push(
-        <PaginationItem key="ellipsis-end" disabled>
-          <PaginationLink>...</PaginationLink>
-        </PaginationItem>
-      );
-
-      pageButtons.push(
-        <PaginationItem key={totalPages - 1}>
-          <PaginationLink onClick={() => pageClick(totalPages - 1)}>
-            {totalPages}
-          </PaginationLink>
-        </PaginationItem>
-      );
-    }
-
-    return pageButtons;
-  };
-
-  return (
-    <>
-      <div className="text-center">
-        {showPageJump && (
-          <div className="float-left pt-2">
-            <span>Page </span>
-            <UncontrolledDropdown className="d-inline-block">
-              <DropdownToggle caret color="outline-primary" size="xs">
-                {pageState + 1}
-              </DropdownToggle>
-              <DropdownMenu direction="left">
-                {Array.from({ length: pages }, (_, i) => i).map((i) => (
-                  <DropdownItem key={i} onClick={() => changePage(i)}>
-                    {i + 1}
-                  </DropdownItem>
-                ))}
-              </DropdownMenu>
-            </UncontrolledDropdown>
-            <span> of </span>
-            {pages}
-          </div>
-        )}
-
-        <Pagination
-          className={`d-inline-block ${!showPrevNextPages ? 'hidden' : ''}`}
-          size="sm"
-          listClassName="justify-content-center"
-          aria-label="Page navigation example"
-        >
-          <PaginationItem className={`${!canPrevious && 'disabled'}`}>
-            <PaginationLink
-              className="prev"
-              onClick={() => {
-                if (!canPrevious) return;
-                changePage(page - 1);
-              }}
-              disabled={!canPrevious}
-            >
-              <i className="simple-icon-arrow-left" />
-            </PaginationLink>
-          </PaginationItem>
-
-          {renderPages()}
-
-          <PaginationItem className={`${!canNext && 'disabled'}`}>
-            <PaginationLink
-              className="next"
-              onClick={() => {
-                if (!canNext) return;
-                changePage(page + 1);
-                setShowPrevNextPages(true);
-              }}
-              disabled={!canNext}
-            >
-              <i className="simple-icon-arrow-right" />
-            </PaginationLink>
-          </PaginationItem>
-        </Pagination>
-        {showPageSizeOptions && (
-          <div className="float-right pt-2">
-            <span className="text-muted text-small mr-1">Items </span>
-            <UncontrolledDropdown className="d-inline-block">
-              <DropdownToggle caret color="outline-primary" size="xs">
-                {pageSize}
-              </DropdownToggle>
-              <DropdownMenu right>
-                {pageSizeOptions.map((size, index) => (
-                  <DropdownItem key={index} onClick={() => changePageSize(size)}>
-                    {size}
-                  </DropdownItem>
-                ))}
-              </DropdownMenu>
-            </UncontrolledDropdown>
-          </div>
-        )}
+      {/* Page count select dropdown */}
+      <div>
+        <UncontrolledDropdown>
+          <DropdownToggle caret outline>
+            {itemsPerPage}
+          </DropdownToggle>
+          <DropdownMenu>
+            {[10, 15, 20, 30, 50].map((count) => (
+              <DropdownItem key={count} onClick={() => handleItemsPerPageChange({ target: { value: count } })}>
+                {count}
+              </DropdownItem>
+            ))}
+          </DropdownMenu>
+        </UncontrolledDropdown>
       </div>
-    </>
+    </div>
   );
 };
 
