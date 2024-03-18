@@ -47,6 +47,10 @@ const HealthReportCard = React.lazy(() =>
   import(/* webpackChunkName: "blank-page" */ './healthReportCard')
 );
 
+const Logout = React.lazy(() =>
+  import(/* webpackChunkName: "blank-page" */ './logout')
+);
+
 const App = ({ match }) => {
   return (
     <AppLayout>
@@ -115,6 +119,11 @@ const App = ({ match }) => {
             <Route
               path={`${match.url}/healthReportCard/:id/:profileid`}
               render={(props) => <HealthReportCard {...props} />}
+            />
+
+            <Route
+              path={`${match.url}/logout`}
+              render={(props) => <Logout {...props} />}
             />
             <Redirect to="/error" />
           </Switch>

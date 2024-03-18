@@ -95,7 +95,7 @@ const filteredData = [
     id: 'logout',
     icon: 'iconsminds-lock-2',
     label: 'menu.logout',
-    to: '/user/login',
+    to: `${adminRoot}/logout`,
     roles: ['Super Admin', 'Admin', 'School Admin'],
   },
   // {

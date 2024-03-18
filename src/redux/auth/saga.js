@@ -103,7 +103,7 @@ const logoutAsync = async (history) => {
     .signOut()
     .then((user) => user)
     .catch((error) => error);
-  history.push(adminRoot);
+    history(`/user/login`);
 };
 
 function* logout({ payload }) {
